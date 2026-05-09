@@ -6,15 +6,11 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
 
-const createPrismaClient = () => {
-  if (!process.env.DATABASE_URL) {
-    // During build, if DATABASE_URL is missing, we still need a client
-    return new PrismaClient({} as any)
-  }
+const connectionString = process.env.DATABASE_URL || "postgresql://postgres:postgres@localhost:5432/postgres"
+const pool = new Pool({ connectionString })
+const adapter = new PrismaPg(pool)
 
-  const pool = new Pool({ connectionString: process.env.DATABASE_URL })
-  const adapter = new PrismaPg(pool)
-  
+const createPrismaClient = () => {
   return new PrismaClient({ adapter })
 }
 
