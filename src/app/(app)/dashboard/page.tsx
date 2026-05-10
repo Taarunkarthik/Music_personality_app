@@ -1,24 +1,23 @@
+import { auth, signOut } from "@/auth"
 import { redirect } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Trash2 } from "lucide-react"
 import { GenerateButton } from "@/components/generate-button"
+import Image from "next/image"
+import { deleteUserDataAction } from "@/app/actions/user"
 
 export const dynamic = 'force-dynamic'
 
 export default async function DashboardPage() {
-  // Safety check: Skip everything during build to prevent DB connection errors
-  if (process.env.NEXT_PHASE === 'phase-production-build') {
-    return <div className="p-20 text-center text-white">Building...</div>
-  }
-
-  // Only import auth and actions at runtime
-  const { auth, signOut } = await import("@/auth")
-  const { deleteUserDataAction } = await import("@/app/actions/user")
-
   const session = await auth()
   
   if (!session) {
     redirect("/login")
+  }
+
+  const handleSignOut = async () => {
+    "use server"
+    await signOut({ redirectTo: "/" })
   }
 
   return (
@@ -29,9 +28,9 @@ export default async function DashboardPage() {
       </div>
 
       <div className="z-10 flex flex-col items-center text-center">
-        <div className="mb-6 h-24 w-24 rounded-full bg-primary/20 ring-1 ring-primary/40 flex items-center justify-center overflow-hidden">
+        <div className="mb-6 h-24 w-24 rounded-full bg-primary/20 ring-1 ring-primary/40 flex items-center justify-center overflow-hidden relative">
           {session.user?.image ? (
-            <img src={session.user.image} alt={session.user.name ?? ""} className="h-full w-full object-cover" />
+            <Image src={session.user.image} alt={session.user.name ?? ""} width={96} height={96} className="h-full w-full object-cover" />
           ) : (
             <span className="text-3xl font-bold text-primary">{session.user?.name?.charAt(0)}</span>
           )}
@@ -45,20 +44,18 @@ export default async function DashboardPage() {
           <GenerateButton />
           
           <div className="flex gap-4 justify-center">
-            <form action={async () => {
-              "use server"
-              const { signOut } = await import("@/auth")
-              await signOut({ redirectTo: "/" })
-            }}>
+            <form action={handleSignOut}>
               <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
                 Sign Out
               </Button>
             </form>
 
-            <form action={deleteUserDataAction} onSubmit={(e) => {
-               if(!confirm("Are you sure? This will permanently delete your profiles.")) e.preventDefault();
-            }}>
-              <Button variant="ghost" className="text-muted-foreground hover:text-destructive transition-colors flex items-center gap-2">
+            <form action={deleteUserDataAction}>
+              <Button 
+                variant="ghost" 
+                className="text-muted-foreground hover:text-destructive transition-colors flex items-center gap-2"
+                // Confirm dialog should be handled by a client component or a button with onClick if we want it to work before submission
+              >
                 <Trash2 className="w-4 h-4" />
                 Delete My Data
               </Button>

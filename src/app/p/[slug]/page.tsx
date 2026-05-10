@@ -57,6 +57,12 @@ export default async function PublicProfilePage({
     return <div className="p-20 text-center text-white">Building...</div>
   }
 
+  let profileData: ProfileData | null = null
+  let currentUserProfileSlug: string | undefined = undefined
+  let userName = ""
+  let userImage: string | null | undefined = undefined
+  let isOwner = false
+
   try {
     const { db } = await import("@/lib/db")
     
@@ -74,19 +80,24 @@ export default async function PublicProfilePage({
       notFound()
     }
 
-    const data = JSON.parse(profile.data) as ProfileData
-
-    return (
-      <ProfileReveal 
-        data={data} 
-        userName={profile.user.name || "Music Lover"} 
-        userImage={profile.user.image}
-        isOwner={session?.user?.id === profile.userId}
-        shareSlug={profile.shareSlug}
-        currentUserProfileSlug={currentUserProfile?.shareSlug}
-      />
-    )
+    profileData = JSON.parse(profile.data) as ProfileData
+    userName = profile.user.name || "Music Lover"
+    userImage = profile.user.image
+    isOwner = session?.user?.id === profile.userId
+    currentUserProfileSlug = currentUserProfile?.shareSlug
   } catch (error) {
+    console.error("Error loading public profile:", error)
     return <div className="p-20 text-center text-white">Error loading public profile.</div>
   }
+
+  return (
+    <ProfileReveal 
+      data={profileData} 
+      userName={userName} 
+      userImage={userImage}
+      isOwner={isOwner}
+      shareSlug={slug}
+      currentUserProfileSlug={currentUserProfileSlug}
+    />
+  )
 }

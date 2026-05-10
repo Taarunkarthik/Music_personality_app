@@ -2,9 +2,11 @@ import NextAuth from "next-auth"
 import Spotify from "next-auth/providers/spotify"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { db } from "@/lib/db"
+import { env } from "@/lib/env"
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(db as any),
+  adapter: PrismaAdapter(db),
+  secret: env.AUTH_SECRET,
   providers: [
     Spotify({
       clientId: process.env.SPOTIFY_CLIENT_ID,

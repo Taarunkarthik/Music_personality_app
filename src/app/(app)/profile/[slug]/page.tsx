@@ -16,6 +16,10 @@ export default async function ProfilePage({
     return <div className="p-20 text-center">Building...</div>
   }
 
+  let profileData: ProfileData | null = null
+  let userName = ""
+  let userImage: string | null | undefined = undefined
+
   try {
     const { db } = await import("@/lib/db")
     
@@ -33,18 +37,21 @@ export default async function ProfilePage({
       redirect(`/p/${slug}`)
     }
 
-    const data = JSON.parse(profile.data) as ProfileData
-
-    return (
-      <ProfileReveal 
-        data={data} 
-        userName={profile.user.name || "Music Lover"} 
-        userImage={profile.user.image}
-        isOwner={true}
-        shareSlug={profile.shareSlug}
-      />
-    )
+    profileData = JSON.parse(profile.data) as ProfileData
+    userName = profile.user.name || "Music Lover"
+    userImage = profile.user.image
   } catch (error) {
+    console.error("Error loading profile:", error)
     return <div className="p-20 text-center">Error loading profile.</div>
   }
+
+  return (
+    <ProfileReveal 
+      data={profileData} 
+      userName={userName} 
+      userImage={userImage}
+      isOwner={true}
+      shareSlug={slug}
+    />
+  )
 }

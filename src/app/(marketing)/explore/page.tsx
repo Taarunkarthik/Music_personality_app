@@ -3,11 +3,12 @@ import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { Sparkles, Music2 } from "lucide-react"
 import { ProfileData } from "@/components/profile-reveal"
+import Image from "next/image"
 
 export const dynamic = 'force-dynamic'
 
 export default async function ExplorePage() {
-  let profiles: (any & { user: any })[] = []
+  let profiles: any[] = []
   
   if (process.env.NEXT_PHASE === 'phase-production-build') {
      return <div className="p-20 text-center">Building...</div>
@@ -50,9 +51,9 @@ export default async function ExplorePage() {
                   />
                   
                   <div className="flex items-center gap-3 mb-6">
-                    <div className="h-10 w-10 rounded-full overflow-hidden ring-1 ring-white/20">
+                    <div className="h-10 w-10 rounded-full overflow-hidden ring-1 ring-white/20 relative">
                        {profile.user.image ? (
-                          <img src={profile.user.image} alt="" className="h-full w-full object-cover" />
+                          <Image src={profile.user.image} alt="" fill className="object-cover" />
                        ) : (
                           <div className="h-full w-full flex items-center justify-center bg-primary/20 text-xs font-bold text-primary">
                             {profile.user.name?.charAt(0)}

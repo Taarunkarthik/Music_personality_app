@@ -4,6 +4,7 @@ import { Progress } from "@/components/ui/progress"
 import { Sparkles, Zap, Share2 } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import Image from "next/image"
 
 export interface ProfileData {
   aura: string
@@ -51,7 +52,7 @@ export function ProfileReveal({ data, userName, userImage, isOwner, currentUserP
           <div className="flex justify-center mb-6">
              <div className="h-20 w-20 rounded-full bg-primary/20 ring-1 ring-primary/40 flex items-center justify-center overflow-hidden relative">
                 {userImage ? (
-                  <img src={userImage} alt={userName} className="h-full w-full object-cover" />
+                  <Image src={userImage} alt={userName} width={80} height={80} className="h-full w-full object-cover" />
                 ) : (
                   <span className="text-2xl font-bold text-primary">{userName.charAt(0)}</span>
                 )}
