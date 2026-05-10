@@ -9,19 +9,21 @@ import { deleteUserDataAction } from "@/app/actions/user"
 export const dynamic = 'force-dynamic'
 
 export default async function DashboardPage() {
-  const session = await auth()
-  
-  if (!session) {
-    redirect("/login")
-  }
+  try {
+    const session = await auth()
+    
+    if (!session) {
+      redirect("/login")
+    }
 
-  const handleSignOut = async () => {
-    "use server"
-    await signOut({ redirectTo: "/" })
-  }
+    const handleSignOut = async () => {
+      "use server"
+      await signOut({ redirectTo: "/" })
+    }
 
-  return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background px-6 text-foreground">
+    return (
+      <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background px-6 text-foreground">
+        {/* ... existing content ... */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <div className="absolute -bottom-[10%] -right-[10%] h-[40%] w-[40%] rounded-full bg-primary/10 blur-[120px]" />
         <div className="absolute -top-[10%] -left-[10%] h-[30%] w-[30%] rounded-full bg-primary/5 blur-[120px]" />
@@ -63,6 +65,19 @@ export default async function DashboardPage() {
           </div>
         </div>
       </div>
-    </div>
-  )
+    )
+  } catch (error: any) {
+    console.error("Dashboard Render Error:", error)
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-background p-6 text-center">
+        <h2 className="text-2xl font-bold text-white mb-4">Something went wrong</h2>
+        <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg max-w-2xl overflow-auto">
+          <code className="text-destructive text-sm font-mono whitespace-pre-wrap text-left block">
+            {error.message || "Unknown error"}
+          </code>
+        </div>
+        <p className="mt-4 text-muted-foreground">Check your environment variables and database connection.</p>
+      </div>
+    )
+  }
 }
