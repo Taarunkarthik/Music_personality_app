@@ -1,24 +1,22 @@
-import { PrismaClient } from '@prisma/client'
-import { PrismaPg } from '@prisma/adapter-pg'
 import { Pool } from 'pg'
+import { PrismaPg } from '@prisma/adapter-pg'
+import { PrismaClient } from '@prisma/client'
+
+const connectionString = process.env.DATABASE_URL
+
+const pool = new Pool({ 
+  connectionString,
+  // Supavisor works better without SSL verification for some pooler configs, 
+  // but let's try with it first.
+  ssl: { rejectUnauthorized: false }
+})
+
+const adapter = new PrismaPg(pool)
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
 
-const connectionString = process.env.DATABASE_URL || "postgresql://postgres:postgres@localhost:5432/postgres"
-const isLocalhost = connectionString.includes('localhost') || connectionString.includes('127.0.0.1')
+export const db = globalForPrisma.prisma ?? new PrismaClient({ adapter })
 
-const pool = new Pool({ 
-  connectionString,
-  ssl: isLocalhost ? false : { rejectUnauthorized: false }
-})
-const adapter = new PrismaPg(pool)
-
-const createPrismaClient = () => {
-  return new PrismaClient({ adapter })
-}
-
-export const db = globalForPrisma.prisma ?? createPrismaClient()
-
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = db
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db

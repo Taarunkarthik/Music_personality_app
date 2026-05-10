@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'platform-lookaside.fbsbx.com', // For some Spotify profile pics
+        hostname: 'platform-lookaside.fbsbx.com',
         port: '',
         pathname: '/**',
       },

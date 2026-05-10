@@ -7,7 +7,7 @@ import { Music2 } from "lucide-react"
 export function SignInButton() {
   return (
     <Button 
-      onClick={() => signIn("spotify", { redirectTo: "/dashboard" })}
+      onClick={() => signIn("spotify")}
       size="lg" 
       className="h-14 px-8 text-lg font-semibold shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95"
     >

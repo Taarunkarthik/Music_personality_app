@@ -68,6 +68,9 @@ export default async function DashboardPage() {
     </div>
     )
   } catch (error: any) {
+    // If it's a redirect, we must re-throw it so Next.js can handle it
+    if (error.message === "NEXT_REDIRECT") throw error
+    
     console.error("Dashboard Render Error:", error)
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-background p-6 text-center">
