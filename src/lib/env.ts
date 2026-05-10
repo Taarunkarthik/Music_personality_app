@@ -21,14 +21,11 @@ const processEnv = {
 const parsed = envSchema.safeParse(processEnv)
 
 if (!parsed.success) {
-  const isBuild = process.env.NEXT_PHASE === 'phase-production-build' || process.env.CI === 'true'
+  const isBuild = process.env.NEXT_PHASE === 'phase-production-build' || process.env.CI === 'true' || process.argv.some(arg => arg.includes('prisma'))
   
-  if (isBuild) {
-    console.warn("⚠️ Some environment variables are missing during build. This is expected if they are not needed for static generation.")
-  } else {
+  if (!isBuild) {
     console.error("❌ Invalid environment variables:", JSON.stringify(parsed.error.flatten().fieldErrors, null, 2))
     
-    // In production, we must have all environment variables
     if (process.env.NODE_ENV === 'production') {
       throw new Error(`Invalid environment variables: ${Object.keys(parsed.error.flatten().fieldErrors).join(", ")}`)
     }
