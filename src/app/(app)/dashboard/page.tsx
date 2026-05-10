@@ -65,6 +65,7 @@ export default async function DashboardPage() {
           </div>
         </div>
       </div>
+    </div>
     )
   } catch (error: any) {
     console.error("Dashboard Render Error:", error)
