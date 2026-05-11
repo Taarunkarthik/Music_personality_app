@@ -59,6 +59,4 @@ A cinematic, AI-powered music analysis platform that turns your Spotify listenin
    npm run dev
    ```
 
-## 📜 License
 
-MIT License. Created by [Lavanya Gandepalli](https://github.com/lavanyagandepalli07).
